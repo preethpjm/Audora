@@ -1,15 +1,17 @@
+
+
 import streamlit as st
 import google.generativeai as genai
 import requests
 import json
-from deepface import DeepFace
+#from deepface import DeepFace
 from PIL import Image # Pillow for image handling with Streamlit
 import io # To handle image bytes
 import os # Needed for working with file paths if saving temp image
 
 # --- Page Configuration (Optional but Recommended) ---
 st.set_page_config(
-    page_title="Mood Music & Support Assistant",
+    page_title="Audora",
     page_icon="🎵",
     layout="wide",
 )
@@ -36,41 +38,7 @@ YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/search"
 
 def detect_emotion_from_image(image_bytes):
     """Detects emotion from image bytes provided by Streamlit uploader."""
-    if image_bytes is None:
-        return "unknown"
-    try:
-        # DeepFace typically needs a file path. Let's save the bytes temporarily.
-        # Alternatively, some versions/backends might accept numpy arrays directly
-        # after converting bytes -> PIL Image -> numpy array. Saving is often simpler.
-
-        img = Image.open(io.BytesIO(image_bytes))
-        # Define a temporary path (Streamlit usually runs in a linux container)
-        temp_image_path = "temp_uploaded_image.png" # Use png or jpg
-        img.save(temp_image_path) # Save the image received
-
-        with st.spinner("Analyzing emotion..."):
-            result = DeepFace.analyze(img_path=temp_image_path, actions=["emotion"], enforce_detection=False)
-
-        # Clean up the temporary file
-        if os.path.exists(temp_image_path):
-            os.remove(temp_image_path)
-
-        # Process result
-        if isinstance(result, list) and len(result) > 0 and 'dominant_emotion' in result[0]:
-             dominant_emotion = result[0]["dominant_emotion"]
-             st.success(f"Emotion detected: {dominant_emotion.capitalize()}")
-             return dominant_emotion
-        else:
-             st.warning("Could not detect a face or determine emotion from the image.")
-             # print(f"DeepFace Result: {result}") # For debugging if needed
-             return "unknown"
-
-    except Exception as e:
-        st.error(f"Error during emotion detection: {e}")
-        # Clean up temp file even if error occurs
-        if os.path.exists(temp_image_path):
-            os.remove(temp_image_path)
-        return "unknown"
+    return "unknown"
 
 # Function to get AI therapist advice and real song recommendations (Unchanged Logically)
 def get_ai_recommendation(emotion, responses):
